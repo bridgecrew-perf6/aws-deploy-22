@@ -1,0 +1,26 @@
+version: 0.0
+os: linux
+files:
+  - source: /app
+    destination: /var/www/html
+  - source: /scripts/kernel.dotnetcore-cd.service
+    destination: /etc/systemd/system
+  - source: /scripts/default
+    destination: /etc/nginx/sites-available
+hooks:
+  BeforeInstall:
+    - location: scripts/before-install.sh
+      timeout: 30
+  #   runas: root
+  AfterInstall:
+  #  - location: scripts/etc.sh
+  #    timeout: 300
+  #    runas: root
+  ApplicationStart:
+    - location: scripts/application_start.sh
+      timeout: 30
+  #   runas: root
+  ApplicationStop:
+    - location: scripts/application_stop.sh
+      timeout: 30
+  #   runas: root

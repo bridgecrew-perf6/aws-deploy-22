@@ -1,0 +1,31 @@
+# Based on https://github.com/PrakashTrove/AWS-CodeBuild-NetCore/blob/master/buildspec.yml
+# AWS CodeBuild spec to build an Elastic Beanstalk artifact for AWS CodePipeline to deploy
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      dotnet: latest
+
+  pre_build:
+    commands:
+      - echo Restore started on `date`
+      - dotnet restore
+
+  build:
+    commands:
+      - echo Build started on `date`
+      - dotnet build
+      - echo Test started on `date`
+      - dotnet test
+
+  post_build:
+    commands:
+      - echo Publish started on `date`
+      - dotnet publish -c Release -o app --self-contained false src/AWS.CodeDeploy.Api
+
+artifacts:
+  files:
+    - ./app/*
+    - appspec.yml
+    - ./scripts/*

@@ -1,0 +1,9 @@
+.vscode
+.vs
+/obj
+/bin
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
