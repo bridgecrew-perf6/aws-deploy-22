@@ -1,0 +1,48 @@
+version: "3.5"
+
+networks:
+  aws-net:
+    driver: bridge
+
+services:
+  nginx:
+    image: esilean/aws-nginx
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    restart: always # because it is routing traffic to our entire app
+    ports:
+      - "8080:80"
+    depends_on:
+      - operation-api
+      - location-api
+    networks:
+      - aws-net
+
+  operation-api:
+    image: esilean/aws-operation-api
+    build:
+      context: ./src
+      dockerfile: OperationsService/AWS.Insurance.Operations.Api/Dockerfile
+    container_name: operation-api
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    # ports:
+    #   - "5000:80"
+    networks:
+      - aws-net
+
+  location-api:
+    image: esilean/aws-location-api
+    build:
+      context: ./src
+      dockerfile: LocationsService/AWS.Insurance.Locations.Api/Dockerfile
+    container_name: location-api
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    # ports:
+    #   - "5005:80"
+    networks:
+      - aws-net

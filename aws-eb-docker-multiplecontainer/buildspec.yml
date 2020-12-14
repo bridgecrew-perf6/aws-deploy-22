@@ -1,0 +1,23 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      docker: 19
+  pre_build:
+    commands:
+  build:
+    commands:
+      # Build the Docker images
+      - echo Building the production Docker image...
+      - docker build -t esilean/aws-operation-api -f ./src/OperationsService/AWS.Insurance.Operations.Api/Dockerfile ./src
+      - docker build -t esilean/aws-location-api -f ./src/LocationsService/AWS.Insurance.Locations.Api/Dockerfile ./src
+      - docker build -t esilean/aws-nginx -f ./nginx/Dockerfile ./nginx
+      # Log in to the Docker CLI
+      - echo "$DOCKER_PW" | docker login -u "$DOCKER_ID" --password-stdin
+  post_build:
+    commands:
+      # Take these images and push them to Docker hub
+      - echo Pushing the Docker images...
+      - docker push esilean/aws-operation-api
+      - docker push esilean/aws-location-api
+      - docker push esilean/aws-nginx
